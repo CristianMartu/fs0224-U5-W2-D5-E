@@ -1,5 +1,6 @@
 package cristianmartucci.U5_W2_D5_E.services;
 
+import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import cristianmartucci.U5_W2_D5_E.entities.Employee;
 import cristianmartucci.U5_W2_D5_E.exceptions.NotFoundException;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private Cloudinary cloudinary;
 
     public Employee saveEmployee(EmployeeDTO employeeDTO){
         Employee employee = new Employee(employeeDTO.username(), employeeDTO.name(), employeeDTO.surname(), employeeDTO.email());
@@ -30,7 +33,7 @@ public class EmployeeService {
     public Page<Employee> getAllEmployee(int pageNumber, int pageSize, String sortBy){
         if(pageSize > 50) pageSize = 50;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
-        return employeeRepository.findAll(pageable);
+        return this.employeeRepository.findAll(pageable);
     }
 
     public Employee findByID(UUID employeeId){
@@ -50,6 +53,16 @@ public class EmployeeService {
     public void deleteEmployee(UUID employeeId) {
         Employee employee = this.findByID(employeeId);
         this.employeeRepository.delete(employee);
+    }
+
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        return (String) this.cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+    }
+
+    public Employee patchEmployee(UUID employeeId, String url){
+        Employee employee = this.findByID(employeeId);
+        employee.setAvatar(url);
+        return this.employeeRepository.save(employee);
     }
 }
 

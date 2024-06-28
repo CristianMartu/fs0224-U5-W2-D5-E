@@ -33,7 +33,7 @@ public class DeviceService {
     public Page<Device> getAllDevice(int pageNumber, int pageSize, String sortBy){
         if(pageSize > 50) pageSize = 50;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
-        return deviceRepository.findAll(pageable);
+        return this.deviceRepository.findAll(pageable);
     }
 
     public Device findByID(UUID deviceId){
