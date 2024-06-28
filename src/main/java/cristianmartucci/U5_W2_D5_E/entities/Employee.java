@@ -23,6 +23,7 @@ public class Employee {
     private String name;
     private String surname;
     private String email;
+    private String avatar;
 
     public Employee(String username, String name, String surname, String email) {
         this.username = username;
