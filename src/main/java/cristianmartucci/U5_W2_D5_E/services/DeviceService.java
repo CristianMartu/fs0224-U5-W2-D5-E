@@ -7,6 +7,8 @@ import cristianmartucci.U5_W2_D5_E.enums.DeviceTypology;
 import cristianmartucci.U5_W2_D5_E.exceptions.BadRequestException;
 import cristianmartucci.U5_W2_D5_E.exceptions.NotFoundException;
 import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceResponseDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeResponseDTO;
 import cristianmartucci.U5_W2_D5_E.repositories.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,7 +28,7 @@ public class DeviceService {
     private  EmployeeService employeeService;
 
     public Device saveDevice(DeviceDTO deviceDTO){
-        Device device = new Device(stringToDeviceTypology(deviceDTO.deviceTypology()), stringToDeviceStatus(deviceDTO.deviceStatus()), this.employeeService.findByID(deviceDTO.employeeId()));
+        Device device = new Device(stringToDeviceTypology(deviceDTO.deviceTypology()), stringToDeviceStatus(deviceDTO.deviceStatus()));
         return this.deviceRepository.save(device);
     }
 
@@ -40,11 +42,17 @@ public class DeviceService {
         return this.deviceRepository.findById(deviceId).orElseThrow(() -> new NotFoundException(deviceId));
     }
 
-    public Device updateDevice(UUID deviceId, Device updateDevice){
+    public Device updateDevice(UUID deviceId, DeviceDTO updateDevice){
         Device device = this.findByID(deviceId);
-        device.setDeviceTypology(updateDevice.getDeviceTypology());
-        device.setDeviceStatus(updateDevice.getDeviceStatus());
-        device.setEmployee(updateDevice.getEmployee());
+        device.setDeviceTypology(stringToDeviceTypology(updateDevice.deviceTypology()));
+        device.setDeviceStatus(stringToDeviceStatus(updateDevice.deviceStatus()));
+        return this.deviceRepository.save(device);
+    }
+
+    public Device patchDeviceEmployee(UUID deviceId, EmployeeResponseDTO employeeResponseDTO){
+        Device device = this.findByID(deviceId);
+        Employee employee = this.employeeService.findByID(employeeResponseDTO.employeeId());
+        device.setEmployee(employee);
         return this.deviceRepository.save(device);
     }
 

@@ -34,7 +34,7 @@ public class DeviceController {
     }
 
     @GetMapping
-    private Page<Device> getAllDevice(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "employeeId") String sortBy){
+    private Page<Device> getAllDevice(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "deviceId") String sortBy){
         return this.deviceService.getAllDevice(page, size, sortBy);
     }
 
@@ -44,8 +44,13 @@ public class DeviceController {
     }
 
     @PutMapping("/{deviceId}")
-    public Device updateDevice(@PathVariable UUID deviceId, @RequestBody Device body) {
+    public Device updateDevice(@PathVariable UUID deviceId, @RequestBody DeviceDTO body) {
         return this.deviceService.updateDevice(deviceId, body);
+    }
+
+    @PatchMapping("/{deviceId}/employee")
+    public Device patchUpdateDeviceEmployee(@PathVariable UUID deviceId,@RequestBody EmployeeResponseDTO employeeResponseDTO){
+        return  this.deviceService.patchDeviceEmployee(deviceId, employeeResponseDTO);
     }
 
     @DeleteMapping("/{deviceId}")
