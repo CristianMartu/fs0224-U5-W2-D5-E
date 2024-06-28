@@ -8,6 +8,7 @@ import cristianmartucci.U5_W2_D5_E.exceptions.BadRequestException;
 import cristianmartucci.U5_W2_D5_E.exceptions.NotFoundException;
 import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceDTO;
 import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceResponseDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeIdDTO;
 import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeResponseDTO;
 import cristianmartucci.U5_W2_D5_E.repositories.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,9 @@ public class DeviceService {
         return this.deviceRepository.save(device);
     }
 
-    public Device patchDeviceEmployee(UUID deviceId, EmployeeResponseDTO employeeResponseDTO){
+    public Device patchDeviceEmployee(UUID deviceId, EmployeeIdDTO employeeIdDTO){
         Device device = this.findByID(deviceId);
-        Employee employee = this.employeeService.findByID(employeeResponseDTO.employeeId());
+        Employee employee = this.employeeService.findByID(UUID.fromString(employeeIdDTO.employeeId()));
         device.setEmployee(employee);
         return this.deviceRepository.save(device);
     }

@@ -6,6 +6,7 @@ import cristianmartucci.U5_W2_D5_E.exceptions.BadRequestException;
 import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceDTO;
 import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceResponseDTO;
 import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeIdDTO;
 import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeResponseDTO;
 import cristianmartucci.U5_W2_D5_E.services.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,12 @@ public class DeviceController {
     }
 
     @PatchMapping("/{deviceId}/employee")
-    public Device patchUpdateDeviceEmployee(@PathVariable UUID deviceId,@RequestBody EmployeeResponseDTO employeeResponseDTO){
-        return  this.deviceService.patchDeviceEmployee(deviceId, employeeResponseDTO);
+    public Device patchUpdateDeviceEmployee(@PathVariable UUID deviceId, @RequestBody @Validated EmployeeIdDTO employeeIdDTO, BindingResult validationResult){
+        if (validationResult.hasErrors()){
+            System.out.println(validationResult.getAllErrors());
+            throw new BadRequestException(validationResult.getAllErrors());
+        }
+        return  this.deviceService.patchDeviceEmployee(deviceId, employeeIdDTO);
     }
 
     @DeleteMapping("/{deviceId}")
