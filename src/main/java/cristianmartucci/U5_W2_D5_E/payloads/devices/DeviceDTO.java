@@ -4,7 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.UUID;
 
-public record DeviceDTO(@NotBlank String deviceTypology,
-                        @NotBlank String deviceStatus,
+public record DeviceDTO(@NotBlank(message = "Tipologia obbligatoria")
+                        String deviceTypology,
+                        @NotBlank(message = "Stato obbligatorio")
+                        String deviceStatus,
                         UUID employeeId) {
 }

@@ -1,13 +1,56 @@
 package cristianmartucci.U5_W2_D5_E.controllers;
 
+import cristianmartucci.U5_W2_D5_E.entities.Device;
+import cristianmartucci.U5_W2_D5_E.entities.Employee;
+import cristianmartucci.U5_W2_D5_E.exceptions.BadRequestException;
+import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.devices.DeviceResponseDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeDTO;
+import cristianmartucci.U5_W2_D5_E.payloads.employees.EmployeeResponseDTO;
 import cristianmartucci.U5_W2_D5_E.services.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/devices")
 public class DeviceController {
     @Autowired
     private DeviceService deviceService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    private DeviceResponseDTO saveDevice(@RequestBody @Validated DeviceDTO deviceDTO, BindingResult validationResult){
+        if (validationResult.hasErrors()){
+            System.out.println(validationResult.getAllErrors());
+            throw new BadRequestException(validationResult.getAllErrors());
+        }
+        return new DeviceResponseDTO(this.deviceService.saveDevice(deviceDTO).getDeviceId());
+    }
+
+    @GetMapping
+    private Page<Device> getAllDevice(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "employeeId") String sortBy){
+        return this.deviceService.getAllDevice(page, size, sortBy);
+    }
+
+    @GetMapping("/{deviceId}")
+    private Device findById(@PathVariable UUID deviceId){
+        return this.deviceService.findByID(deviceId);
+    }
+
+    @PutMapping("/{deviceId}")
+    public Device updateDevice(@PathVariable UUID deviceId, @RequestBody Device body) {
+        return this.deviceService.updateDevice(deviceId, body);
+    }
+
+    @DeleteMapping("/{deviceId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDevice(@PathVariable UUID deviceId) {
+        this.deviceService.deleteDevice(deviceId);
+    }
 }

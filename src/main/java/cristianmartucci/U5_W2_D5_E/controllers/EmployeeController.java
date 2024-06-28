@@ -22,7 +22,7 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private EmployeeResponseDTO saveAuthor(@RequestBody @Validated EmployeeDTO employeeDTO, BindingResult validationResult){
+    private EmployeeResponseDTO saveEmployee(@RequestBody @Validated EmployeeDTO employeeDTO, BindingResult validationResult){
         if (validationResult.hasErrors()){
             System.out.println(validationResult.getAllErrors());
             throw new BadRequestException(validationResult.getAllErrors());
@@ -31,12 +31,23 @@ public class EmployeeController {
     }
 
     @GetMapping
-    private Page<Employee> getAllAuthor(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "employeeId") String sortBy){
+    private Page<Employee> getAllEmployee(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "employeeId") String sortBy){
         return this.employeeService.getAllEmployee(page, size, sortBy);
     }
 
     @GetMapping("/{employeeId}")
     private Employee findById(@PathVariable UUID employeeId){
         return this.employeeService.findByID(employeeId);
+    }
+
+    @PutMapping("/{employeeId}")
+    public Employee updateEmployee(@PathVariable UUID employeeId, @RequestBody Employee body) {
+        return this.employeeService.updateEmployee(employeeId, body);
+    }
+
+    @DeleteMapping("/{employeeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEmployee(@PathVariable UUID employeeId) {
+        this.employeeService.deleteEmployee(employeeId);
     }
 }
